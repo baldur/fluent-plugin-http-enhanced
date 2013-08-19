@@ -15,12 +15,7 @@ module Fluent
 
           tag = @default_tag if tag == '' && @default_tag != ''
           record = params
-          time = params['time']
-          time ||= params['t']
-          time = time[0..9].to_i  # just make sure that its 10 digits epoch time in seconds not miliseconds
-          if time == 0
-            time = Engine.now
-          end
+          time = Engine.now
         rescue
           return ["400 Bad Request", {'Content-type'=>'text/plain'}, "400 Bad Request\n#{$!}\n"]
         end
