@@ -1,5 +1,10 @@
 module Fluent
   class HttpEnhanced < Fluent::HttpInput
+    def initialize
+      super
+      require 'json'
+    end
+
     Plugin.register_input('httpenhanced', self)
 
     config_param :full_query_string_record, :bool, :default => 'false'
@@ -14,13 +19,13 @@ module Fluent
           return ["200 OK", {'Content-type'=>'text/xml'}, CROSSDOMAIN_XML]unless tag.downcase.match("crossdomain.xml").nil?
 
           tag = @default_tag if tag == '' && @default_tag != ''
-          record = params
-          time = Engine.now
+          params.delete('cb')
+          params['time'] = Engine.now
         rescue
           return ["400 Bad Request", {'Content-type'=>'text/plain'}, "400 Bad Request\n#{$!}\n"]
         end
         begin
-          Engine.emit(tag, time, record)
+          Engine.emit(tag, params['time'], {'log' => params.to_json})
         rescue
           return ["500 Internal Server Error", {'Content-type'=>'text/plain'}, "500 Internal Server Error\n#{$!}\n"]
         end
