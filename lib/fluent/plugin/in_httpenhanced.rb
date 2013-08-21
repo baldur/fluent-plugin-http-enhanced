@@ -20,12 +20,12 @@ module Fluent
 
           tag = @default_tag if tag == '' && @default_tag != ''
           params.delete('cb')
-          params['time'] = Engine.now
+          params['created_at'] = Engine.now
         rescue
           return ["400 Bad Request", {'Content-type'=>'text/plain'}, "400 Bad Request\n#{$!}\n"]
         end
         begin
-          Engine.emit(tag, params['time'], {'log' => params.to_json})
+          Engine.emit(tag, params['created_at'], {'log' => params.to_json})
         rescue
           return ["500 Internal Server Error", {'Content-type'=>'text/plain'}, "500 Internal Server Error\n#{$!}\n"]
         end
