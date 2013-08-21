@@ -20,7 +20,7 @@ module Fluent
 
           tag = @default_tag if tag == '' && @default_tag != ''
           params.delete('cb')
-          params['created_at'] = Engine.now
+          params['created_at'] =  Time.new
         rescue
           return ["400 Bad Request", {'Content-type'=>'text/plain'}, "400 Bad Request\n#{$!}\n"]
         end
